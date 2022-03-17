@@ -74,7 +74,7 @@ class _AppoitmentsState extends State<Appoitments> {
               SizedBox(
                 height: size.height * 0.675,
                 child: StreamBuilder(
-                  stream: store.getUserAppointments(id: 2).asStream(),
+                  stream: store.getPatientAppointments(id: 2).asStream(),
                   builder: (context, snapshot) {
                     if (snapshot.hasError || !snapshot.hasData) {
                       return const SizedBox();
@@ -86,82 +86,76 @@ class _AppoitmentsState extends State<Appoitments> {
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: store.user.provider != null
-                              ? () {
-                                  debugPrint(
-                                      "provider_rep do not confirm appointnment");
-                                }
-                              : store.user.doctor != null &&
-                                      snapshot.data[index]['doctor_confirm']
-                                  ? () {
-                                      debugPrint("doctor is already confirmed");
-                                    }
-                                  : store.user.patient != null &&
-                                          snapshot.data[index]
-                                              ['patient_confirm']
-                                      ? () {
-                                          debugPrint(
-                                              "patient is aleady confirmed");
-                                        }
-                                      : () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: ListTile(
-                                                    subtitle: Text(
-                                                        "Dr. ${snapshot.data[index]['doctor']['data']['attributes']['full_name'].toString()}" +
-                                                            " and ${snapshot.data[index]['patient']['data']['attributes']['full_name'].toString()}"),
-                                                    title: Text(
-                                                        snapshot.data[index]
-                                                            ['title'],
-                                                        style: const TextStyle(
-                                                          color: MyColors.blue2,
-                                                          fontWeight:
-                                                              FontWeight.w900,
-                                                        ))),
-                                                content: Text(snapshot
-                                                    .data[index]
-                                                        ['appointmentNotes']
-                                                    .toString()),
-                                                actions: [
-                                                  ElevatedButton(
-                                                    style: const ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStatePropertyAll<
-                                                                    Color>(
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    191,
-                                                                    129,
-                                                                    71))),
-                                                    onPressed: () {
-                                                      // Do something with the user's name.
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    child: const Text("Close"),
-                                                  ),
-                                                  ElevatedButton(
-                                                    style: const ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStatePropertyAll<
-                                                                    Color>(
-                                                                MyColors
-                                                                    .blue2)),
-                                                    onPressed: () {
-                                                      // Do something with the user's name.
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    child:
-                                                        const Text("Confirm"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                    title: ListTile(
+                                        subtitle: Text(
+                                            "Dr. ${snapshot.data[index]['doctor']['data']['attributes']['full_name'].toString()}" +
+                                                " and ${snapshot.data[index]['patient']['data']['attributes']['full_name'].toString()}"),
+                                        title:
+                                            Text(snapshot.data[index]['title'],
+                                                style: const TextStyle(
+                                                  color: MyColors.blue2,
+                                                  fontWeight: FontWeight.w900,
+                                                ))),
+                                    content: SizedBox(
+                                      height: size.width * 0.3,
+                                      child: ListView(
+                                        children: [
+                                          Text(snapshot.data[index]
+                                                  ['appointmentNotes']
+                                              .toString()),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      ElevatedButton(
+                                        style: const ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll<Color>(
+                                                    Color.fromARGB(
+                                                        255, 191, 129, 71))),
+                                        onPressed: () {
+                                          // Do something with the user's name.
+                                          Navigator.of(context).pop();
                                         },
+                                        child: const Text("Close"),
+                                      ),
+                                      if (store.user.doctor != null &&
+                                          !snapshot.data[index]
+                                              ['doctor_confirm'])
+                                        ElevatedButton(
+                                          style: const ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll<
+                                                      Color>(MyColors.blue2)),
+                                          onPressed: () {
+                                            // Do something with the user's name.
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Confirm"),
+                                        ),
+                                      if (store.user.patient != null &&
+                                          !snapshot.data[index]
+                                              ['patient_confirm'])
+                                        ElevatedButton(
+                                          style: const ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStatePropertyAll<
+                                                      Color>(MyColors.blue2)),
+                                          onPressed: () {
+                                            // Do something with the user's name.
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Confirm"),
+                                        ),
+                                    ]);
+                              },
+                            );
+                          },
                           child: ListTile(
                             trailing: store.user.provider != null
                                 ? SizedBox()
