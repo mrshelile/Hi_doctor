@@ -34,9 +34,14 @@ class _LoginFormState extends State<LoginForm> {
               //     context, MaterialPageRoute(builder: (context) => HomePage()));
 
               try {
-                var res = await store.user.login(
-                    username: _usernameController.text.trim(),
-                    password: _passwordController.text.trim());
+                print("object");
+                var res = await store.user
+                    .login(
+                        username: _usernameController.text.trim(),
+                        password: _passwordController.text.trim())
+                    .timeout(Duration(seconds: 20), onTimeout: () {
+                  throw Exception("server might be available");
+                });
                 if (res['jwt'] != null) {
                   setState(() {
                     _error = '';

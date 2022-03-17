@@ -47,6 +47,10 @@ class _AppoitmentsState extends State<Appoitments> {
                 height: size.height * 0.05,
                 child: TextField(
                   controller: _searchController,
+                  onChanged: (value) {
+                    store.searchForAppointment = value;
+                    store.update();
+                  },
                   decoration: const InputDecoration(
                       labelText: "Search",
                       prefixIcon: Icon(Icons.search),
