@@ -18,7 +18,8 @@ class User {
   String token = "";
   final String _userUrl = "api/users";
   final String _login = "api/auth/local";
-  final String _register = "api//api/auth/local/register";
+  final String _register = "api/auth/local/register";
+  final String _appointmentUrl = "api/appoitments";
   Future login({required String username, required String password}) async {
     final Uri url = Uri.parse('$server$_login');
     final body = {
@@ -54,6 +55,21 @@ class User {
 
       throw Exception('Failed to login');
     }
+  }
+
+  Future confirmAppointMent() async {
+    final Uri url = Uri.parse('$server$_appointmentUrl');
+    final body = {
+      'identifier': username,
+      // 'password': password,
+    };
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    final response =
+        await http.post(url, body: jsonEncode(body), headers: headers);
   }
 
   Future sendSms(
