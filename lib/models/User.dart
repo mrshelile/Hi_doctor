@@ -35,8 +35,7 @@ class User {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       this.jwt = data['jwt'];
-      this.fullNames = data['user']['full_name'];
-      this.id_number = data['user']['national_id_number'];
+
       this.username = data['user']['username'];
       this.id = data['user']['id'];
       // print(data);
