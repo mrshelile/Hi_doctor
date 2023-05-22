@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hi_doctor/screens/Login/LoginForm.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
 
 class OnBoarding extends StatelessWidget {
@@ -39,14 +40,19 @@ class OnBoarding extends StatelessWidget {
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(
+                        side: const BorderSide(
                           color: Colors.teal,
                           width: 2.0,
                         ),
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginForm()),
+                    );
+                  },
                   child: const Text(
                     "Continue Here",
                     style: TextStyle(
@@ -74,7 +80,7 @@ class OnBoarding extends StatelessWidget {
             left: size.width * 0.01,
             top: size.height * 0.15,
             child: SizedBox(
-              width: size.width ,
+              width: size.width,
               child: SvgPicture.asset("assets/doctor1.svg",
                   // colorFilter: ColorFilter.mode(Colors.red, BlendMode.srcIn),
                   semanticsLabel: 'Next'),
