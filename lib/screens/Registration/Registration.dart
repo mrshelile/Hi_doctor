@@ -100,7 +100,29 @@ class _RegisterFormState extends State<RegisterForm> {
                   SizedBox(
                     height: size.height * 0.02,
                   ),
+                  if (selectedValue.toString().toLowerCase() == "doctor") ...[
+                    TextFormField(
+                      decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                          labelStyle: TextStyle(color: MyColors.blue0),
+                          focusColor: MyColors.blue0,
+                          border: OutlineInputBorder(
+                              // borderRadius: BorderRadius.all(Radius.circular(45)),
+                              borderSide: BorderSide(color: MyColors.blue0)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: MyColors.blue0)),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: MyColors.blue0),
+                          ),
+                          labelText: "Specialty"),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                  ],
                   TextFormField(
+                    keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -248,7 +270,8 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     SizedBox(
                       height: size.height * 0.02,
-                    ),TextFormField(
+                    ),
+                    TextFormField(
                       obscureText: true,
                       // keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
