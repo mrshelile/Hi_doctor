@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:hi_doctor/screens/Login/LoginForm.dart';
 import 'package:hi_doctor/screens/Registration/components/background.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
 
@@ -297,7 +298,12 @@ class _RegisterFormState extends State<RegisterForm> {
                           style: const ButtonStyle(
                               backgroundColor: MaterialStatePropertyAll<Color>(
                                   MyColors.blue0)),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginForm()));
+                          },
                           child: const Text(
                             "Signin Here!",
                             style: TextStyle(color: Colors.white),
