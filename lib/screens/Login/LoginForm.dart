@@ -25,24 +25,27 @@ class _LoginFormState extends State<LoginForm> {
           child: Icon(Icons.send),
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              try {
-                var res = await User().login(
-                    username: _usernameController.text.trim(),
-                    password: _passwordController.text.trim());
-                if (res['jwt'] != null) {
-                  setState(() {
-                    _error = '';
-                  });
-                  // ignore: use_build_context_synchronously
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
-                }
-                // print(res);
-              } catch (e) {
-                setState(() {
-                  _error = e.toString();
-                });
-              }
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
+
+              // try {
+              //   var res = await User().login(
+              //       username: _usernameController.text.trim(),
+              //       password: _passwordController.text.trim());
+              //   if (res['jwt'] != null) {
+              //     setState(() {
+              //       _error = '';
+              //     });
+              //     // ignore: use_build_context_synchronously
+              //     Navigator.push(context,
+              //         MaterialPageRoute(builder: (context) => HomePage()));
+              //   }
+              //   // print(res);
+              // } catch (e) {
+              //   setState(() {
+              //     _error = e.toString();
+              //   });
+              // }
             }
           },
         ),
