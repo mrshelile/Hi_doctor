@@ -16,17 +16,20 @@ class _HomePageState extends State<HomePage> {
       PersistentTabController(initialIndex: 0);
 
   List<Widget> _buildScreens() {
-    return [MainScreen(), Appoitments(), MedicalRecords(), Doctors()];
+    return [
+      // MainScreen(),
+      Appoitments(), MedicalRecords(), Doctors()
+    ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
-      PersistentBottomNavBarItem(
-        icon: Icon(CupertinoIcons.home),
-        title: ("Home"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+      // PersistentBottomNavBarItem(
+      //   icon: Icon(CupertinoIcons.home),
+      //   title: ("Home"),
+      //   activeColorPrimary: CupertinoColors.activeBlue,
+      //   inactiveColorPrimary: CupertinoColors.systemGrey,
+      // ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.healing_outlined),
         title: ("Appointments"),
