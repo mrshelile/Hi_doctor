@@ -36,7 +36,7 @@ class User {
     } else if (response.statusCode == 400) {
       throw Exception("Invalid logins");
     } else {
-      print(response.body);
+      // print(response.body);
 
       throw Exception('Failed to login');
     }

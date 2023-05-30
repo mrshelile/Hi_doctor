@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hi_doctor/models/User.dart';
 import 'package:hi_doctor/screens/Home/HomePage.dart';
 import 'package:hi_doctor/screens/Login/background.dart';
@@ -64,6 +65,9 @@ class _LoginFormState extends State<LoginForm> {
                   child: ListView(
                     children: [
                       TextFormField(
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         controller: _usernameController,
                         validator: Validators.compose([
                           Validators.required('ID number is required'),
