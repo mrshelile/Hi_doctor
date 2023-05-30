@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hi_doctor/screens/Login/LoginForm.dart';
+import 'package:hi_doctor/store/Store.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
+import 'package:get/get.dart';
 
 class OnBoarding extends StatelessWidget {
+  final store = Get.put(Store());
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).copyWith().size;

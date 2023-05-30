@@ -78,7 +78,29 @@ class _RegisterFormState extends State<RegisterForm> {
                   backgroundColor: MyColors.blue2,
                   child: const Icon(Icons.send),
                   onPressed: () {
-                    if (_formkey.currentState!.validate()) {}
+                    if (_formkey.currentState!.validate()) {
+                      try {
+                        if (selectedValue != null || selectedValue!.isEmpty) {
+                          if (selectedValue.toString().toLowerCase() ==
+                              "patient") {
+                            // registration for patient
+                            if (selectedDate != null) {
+                              
+                            } else {
+                              throw Exception("Date of birth is required");
+                            }
+                          }
+                          if (selectedValue.toString().toLowerCase() ==
+                              "doctor") // registration for doctor
+                          {}
+                          if (selectedValue.toString().toLowerCase() ==
+                              "provider") //Registraion of Hopital care provider
+                          {}
+                        }
+                      } catch (e) {
+                        debugPrint(e.toString());
+                      }
+                    }
                   },
                 ),
               ]),
