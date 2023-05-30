@@ -43,8 +43,8 @@ class _LoginFormState extends State<LoginForm> {
                   });
                   store.update();
                   // ignore: use_build_context_synchronously
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => HomePage()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HomePage()));
                 }
                 // print(res);
               } catch (e) {

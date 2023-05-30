@@ -16,6 +16,7 @@ class User {
   String address = "";
   String jwt = "";
   String token = "";
+  final String _userUrl = "api/users";
   final String _login = "api/auth/local";
   final String _register = "api//api/auth/local/register";
   Future login({required String username, required String password}) async {
@@ -39,6 +40,10 @@ class User {
       this.username = data['user']['username'];
       this.id = data['user']['id'];
       // print(data);
+      var res = await http.get(Uri.parse('$server$_userUrl/$id?populate=*'));
+      patient = jsonDecode(res.body)['patient'];
+      doctor = jsonDecode(res.body)['doctor'];
+      provider = jsonDecode(res.body)['provider_rep'];
       return data;
     } else if (response.statusCode == 405) {
       // print(response.body);
