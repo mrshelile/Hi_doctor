@@ -75,7 +75,7 @@ class _MedicalRecordsState extends State<MedicalRecords> {
           child: SvgPicture.asset("assets/dentist1.svg"),
         ),
         SizedBox(
-          height: size.height * 0.38,
+          height: size.height * 0.36,
           child: ListView.builder(
             itemCount: 15,
             shrinkWrap: true,
