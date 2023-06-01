@@ -13,17 +13,29 @@ class Doctors extends StatefulWidget {
 
 class _DoctorsState extends State<Doctors> {
   final store = Get.find<Store>();
+  final _searchController = TextEditingController();
+  String search = "";
+  @override
+  void initState() {
+    super.initState();
+
+    // This code is safe to run because it is not inside the onChange callback.
+    _searchController.addListener(() {
+      // Update the state of the app whenever the text field is changed.
+      setState(() {
+        search = _searchController.text.trim();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).copyWith().size;
-    final _searchController = TextEditingController();
+
     return GetBuilder(
         init: store,
         builder: (_) {
           return Wrap(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
@@ -33,9 +45,9 @@ class _DoctorsState extends State<Doctors> {
                     width: size.width * 0.4,
                     child: SvgPicture.asset("assets/nurse1.svg"),
                   ),
-                  const Text(
-                    "Hi Malefetsane Shelile",
-                    style: TextStyle(
+                  Text(
+                    "Hi ${store.user.doctor != null ? "Dr. " + store.user.doctor['full_name'] : store.user.provider != null ? store.user.provider['full_name'] : store.user.patient['full_name']}",
+                    style: const TextStyle(
                         color: MyColors.blue1, fontWeight: FontWeight.w700),
                   ),
                 ],
@@ -44,14 +56,10 @@ class _DoctorsState extends State<Doctors> {
                 padding: EdgeInsets.only(left: size.width * 0.07),
                 width: size.width * 0.9,
                 height: size.height * 0.05,
-                child: TextField(
+                child: TextFormField(
                   controller: _searchController,
-                  onChanged: (value) {
-                    store.searchForDoctor = value;
-                    store.update();
-                  },
                   decoration: const InputDecoration(
-                      labelText: "Search",
+                      labelText: "search",
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -73,7 +81,7 @@ class _DoctorsState extends State<Doctors> {
               SizedBox(
                 height: size.height * 0.675,
                 child: StreamBuilder(
-                  stream: store.getAllDoctors().asStream(),
+                  stream: store.getAllDoctors(search: search).asStream(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData || snapshot.hasError) {
                       return SizedBox();

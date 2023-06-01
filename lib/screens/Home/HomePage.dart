@@ -5,6 +5,7 @@ import 'package:hi_doctor/screens/Home/pages/Appoitment.dart';
 import 'package:hi_doctor/screens/Home/pages/Doctors.dart';
 import 'package:hi_doctor/screens/Home/pages/MainScreen.dart';
 import 'package:hi_doctor/screens/Home/pages/MedicalRecords.dart';
+import 'package:hi_doctor/screens/Home/pages/Patients.dart';
 import 'package:hi_doctor/store/Store.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
@@ -23,18 +24,14 @@ class _HomePageState extends State<HomePage> {
       // MainScreen(),
       const Appoitments(),
       if (store.user.provider == null) const MedicalRecords(),
-      if (store.user.doctor == null) const Doctors()
+      if (store.user.doctor == null) const Doctors(),
+      // if (store.user.patient == null)
+      const Patients()
     ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
-      // PersistentBottomNavBarItem(
-      //   icon: Icon(CupertinoIcons.home),
-      //   title: ("Home"),
-      //   activeColorPrimary: CupertinoColors.activeBlue,
-      //   inactiveColorPrimary: CupertinoColors.systemGrey,
-      // ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.healing_outlined),
         title: ("Appointments"),
@@ -55,6 +52,13 @@ class _HomePageState extends State<HomePage> {
           activeColorPrimary: CupertinoColors.activeBlue,
           inactiveColorPrimary: CupertinoColors.systemGrey,
         ),
+      // if (store.user.patient == null)
+      PersistentBottomNavBarItem(
+        icon: const Icon(Icons.assist_walker_rounded),
+        title: ("Patients"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
     ];
   }
 

@@ -115,6 +115,7 @@ class _LoginFormState extends State<LoginForm> {
                                 // Validators.email('wrong email format'),
                               ]),
                               obscureText: true,
+                              keyboardType: TextInputType.text,
                               decoration: const InputDecoration(
                                   fillColor: Colors.white,
                                   labelStyle: TextStyle(color: Colors.cyan),
