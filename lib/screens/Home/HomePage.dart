@@ -25,8 +25,7 @@ class _HomePageState extends State<HomePage> {
       const Appoitments(),
       if (store.user.provider == null) const MedicalRecords(),
       if (store.user.doctor == null) const Doctors(),
-      // if (store.user.patient == null)
-      const Patients()
+      if (store.user.patient == null) const Patients()
     ];
   }
 
@@ -52,13 +51,13 @@ class _HomePageState extends State<HomePage> {
           activeColorPrimary: CupertinoColors.activeBlue,
           inactiveColorPrimary: CupertinoColors.systemGrey,
         ),
-      // if (store.user.patient == null)
-      PersistentBottomNavBarItem(
-        icon: const Icon(Icons.assist_walker_rounded),
-        title: ("Patients"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+      if (store.user.patient == null)
+        PersistentBottomNavBarItem(
+          icon: const Icon(Icons.assist_walker_rounded),
+          title: ("Patients"),
+          activeColorPrimary: CupertinoColors.activeBlue,
+          inactiveColorPrimary: CupertinoColors.systemGrey,
+        ),
     ];
   }
 

@@ -16,14 +16,14 @@ class AppointmentLogic {
     for (var item in data) {
       if (item['attributes']['patient'] != null) {
         if (item['attributes']['patient']['data']['id'] == id) {
-          appointments.add(item['attributes']);
+          appointments.add({"id": item['id'], "values": item['attributes']});
         }
       }
     }
     appointments = appointments.where(
       (element) {
         if (search.isNotEmpty) {
-          return element['title']
+          return element['values']['title']
               .toString()
               .toLowerCase()
               .startsWith(search.toLowerCase());

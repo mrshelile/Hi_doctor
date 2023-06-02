@@ -57,19 +57,19 @@ class User {
     }
   }
 
-  Future confirmAppointMent() async {
-    final Uri url = Uri.parse('$server$_appointmentUrl');
+  Future confirmAppointMentPatient({required var id}) async {
+    final Uri url = Uri.parse('$server$_appointmentUrl/$id');
     final body = {
-      'identifier': username,
-      // 'password': password,
+      "data": {
+        'patient_confirm': true,
+      }
     };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    final response =
-        await http.post(url, body: jsonEncode(body), headers: headers);
+    return await http.put(url, body: jsonEncode(body), headers: headers);
   }
 
   Future sendSms(

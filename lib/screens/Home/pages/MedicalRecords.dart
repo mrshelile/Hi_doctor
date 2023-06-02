@@ -14,13 +14,44 @@ class MedicalRecords extends StatefulWidget {
 
 class _MedicalRecordsState extends State<MedicalRecords> {
   String name = "";
+  String greeting = "Good Morning";
   final store = Get.find<Store>();
   final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).copyWith().size;
-
+    if (store.user.doctor != null) {
+      setState(() {
+        name = "Dr. ${store.user.doctor['full_name']}";
+      });
+    }
+    if (store.user.patient != null) {
+      setState(() {
+        name = "${store.user.patient['full_name']}";
+      });
+    }
+    if (store.user.provider != null) {
+      setState(() {
+        name = "${store.user.provider['full_name']}";
+      });
+    }
+    DateTime now = DateTime.now();
+    if (now.hour < 12) {
+      setState(() {
+        greeting = "Good Morning";
+      });
+    }
+    if (now.hour == 12) {
+      setState(() {
+        greeting = "GoodDay";
+      });
+    }
+    if (now.hour > 1 && now.hour <= 18) {
+      setState(() {
+        greeting = "Good Evening";
+      });
+    }
     return GetBuilder(
         init: store,
         builder: (_) {
@@ -72,8 +103,8 @@ class _MedicalRecordsState extends State<MedicalRecords> {
                       top: size.height * 0.03,
                       bottom: size.height * 0.01),
                   child: Text(
-                    "Hi Malefetsane Shelile, Good Morning!",
-                    style: TextStyle(
+                    "Hi $name, ${greeting}!",
+                    style: const TextStyle(
                         color: MyColors.blue2,
                         fontWeight: FontWeight.w900,
                         fontSize: 20),
@@ -95,15 +126,16 @@ class _MedicalRecordsState extends State<MedicalRecords> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => MedicalRecord()));
+                                      builder: (context) =>
+                                          const MedicalRecord()));
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.arrow_circle_right,
                               color: MyColors.blue1,
                             )),
-                        subtitle: Text(
+                        subtitle: const Text(
                             "Dr. Thao Nape and patient Malefetsane Shelile"),
-                        title: Text("Diognosis",
+                        title: const Text("Diognosis",
                             style: TextStyle(
                               color: MyColors.blue2,
                               fontWeight: FontWeight.w900,

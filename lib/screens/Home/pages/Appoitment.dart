@@ -20,17 +20,19 @@ class _AppoitmentsState extends State<Appoitments> {
     final size = MediaQuery.of(context).copyWith().size;
     final _searchController = TextEditingController();
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: MyColors.blue2,
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CreateAppointment(),
-              ));
-        },
-        child: const Icon(Icons.create),
-      ),
+      floatingActionButton: store.user.provider != null
+          ? null
+          : FloatingActionButton(
+              backgroundColor: MyColors.blue2,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateAppointment(),
+                    ));
+              },
+              child: const Icon(Icons.create),
+            ),
       body: GetBuilder(
           init: store,
           builder: (_) {
@@ -106,10 +108,11 @@ class _AppoitmentsState extends State<Appoitments> {
                                   return AlertDialog(
                                       title: ListTile(
                                           subtitle: Text(
-                                              "Dr. ${snapshot.data[index]['doctor']['data']['attributes']['full_name'].toString()}" +
-                                                  " and ${snapshot.data[index]['patient']['data']['attributes']['full_name'].toString()}"),
+                                              "Dr. ${snapshot.data[index]['values']['doctor']['data']['attributes']['full_name'].toString()}" +
+                                                  " and ${snapshot.data[index]['values']['patient']['data']['attributes']['full_name'].toString()}"),
                                           title: Text(
-                                              snapshot.data[index]['title'],
+                                              snapshot.data[index]['values']
+                                                  ['title'],
                                               style: const TextStyle(
                                                 color: MyColors.blue2,
                                                 fontWeight: FontWeight.w900,
@@ -118,7 +121,7 @@ class _AppoitmentsState extends State<Appoitments> {
                                         height: size.width * 0.3,
                                         child: ListView(
                                           children: [
-                                            Text(snapshot.data[index]
+                                            Text(snapshot.data[index]['values']
                                                     ['appointmentNotes']
                                                 .toString()),
                                           ],
@@ -139,7 +142,7 @@ class _AppoitmentsState extends State<Appoitments> {
                                           child: const Text("Close"),
                                         ),
                                         if (store.user.doctor != null &&
-                                            !snapshot.data[index]
+                                            !snapshot.data[index]['values']
                                                 ['doctor_confirm'])
                                           ElevatedButton(
                                             style: const ButtonStyle(
@@ -153,16 +156,42 @@ class _AppoitmentsState extends State<Appoitments> {
                                             child: const Text("Confirm"),
                                           ),
                                         if (store.user.patient != null &&
-                                            !snapshot.data[index]
+                                            !snapshot.data[index]['values']
                                                 ['patient_confirm'])
                                           ElevatedButton(
                                             style: const ButtonStyle(
                                                 backgroundColor:
                                                     MaterialStatePropertyAll<
                                                         Color>(MyColors.blue2)),
-                                            onPressed: () {
+                                            onPressed: () async {
                                               // Do something with the user's name.
-                                              Navigator.of(context).pop();
+                                              try {
+                                                var response;
+                                                if (store.user
+                                                        .patient != // here patient confirms appointment
+                                                    null) {
+                                                  response = await store.user
+                                                      .confirmAppointMentPatient(
+                                                          id: snapshot
+                                                                  .data[index]
+                                                              ['id']);
+                                                  store.update();
+                                                }
+                                                if (store.user
+                                                        .doctor != // here doctor confirm appointment
+                                                    null) {}
+
+                                                if (response.statusCode ==
+                                                    200) {
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  throw Exception("Failed");
+                                                }
+                                                //
+                                              } catch (e) {
+                                                print(e);
+                                              }
                                             },
                                             child: const Text("Confirm"),
                                           ),
@@ -174,13 +203,14 @@ class _AppoitmentsState extends State<Appoitments> {
                               trailing: store.user.provider != null
                                   ? SizedBox()
                                   : store.user.doctor != null &&
-                                          snapshot.data[index]['doctor_confirm']
+                                          snapshot.data[index]['values']
+                                              ['doctor_confirm']
                                       ? const Icon(
                                           Icons.done,
                                           color: MyColors.green0,
                                         )
                                       : store.user.patient != null &&
-                                              snapshot.data[index]
+                                              snapshot.data[index]['values']
                                                   ['patient_confirm']
                                           ? const Icon(
                                               Icons.done,
@@ -192,12 +222,13 @@ class _AppoitmentsState extends State<Appoitments> {
                                             ),
                               subtitle:
                                   // ignore: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
-                                  Text("${DateTime.parse(snapshot.data[index]['createdAt']).year}-" +
-                                      "${DateTime.parse(snapshot.data[index]['createdAt']).month}-" +
-                                      "${DateTime.parse(snapshot.data[index]['createdAt']).day}  " +
-                                      "${DateTime.parse(snapshot.data[index]['createdAt']).hour}:" +
-                                      "${DateTime.parse(snapshot.data[index]['createdAt']).minute}"),
-                              title: Text("${snapshot.data[index]['title']}"),
+                                  Text("${DateTime.parse(snapshot.data[index]['values']['createdAt']).year}-" +
+                                      "${DateTime.parse(snapshot.data[index]['values']['createdAt']).month}-" +
+                                      "${DateTime.parse(snapshot.data[index]['values']['createdAt']).day}  " +
+                                      "${DateTime.parse(snapshot.data[index]['values']['createdAt']).hour}:" +
+                                      "${DateTime.parse(snapshot.data[index]['values']['createdAt']).minute}"),
+                              title: Text(
+                                  "${snapshot.data[index]['values']['title']}"),
                               leading: SizedBox(
                                 width: size.width * 0.13,
                                 child: SvgPicture.asset("assets/security.svg"),

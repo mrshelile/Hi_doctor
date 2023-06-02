@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hi_doctor/screens/Home/pages/components/CreateAppointment.dart';
+import 'package:hi_doctor/screens/Home/pages/components/CreateMadicalRecord.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
 
 class MedicalRecord extends StatefulWidget {
@@ -13,6 +15,19 @@ class _MedicalRecordState extends State<MedicalRecord> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).copyWith().size;
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: MyColors.blue1,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const CreateMedicalRecord(),
+              ));
+        },
+        child: const Icon(
+          Icons.create_sharp,
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: MyColors.blue2,
         title: Text("01 May 2022 16:30"),
