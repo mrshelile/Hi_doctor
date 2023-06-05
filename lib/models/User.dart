@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:hi_doctor/constants/boot.dart';
 import 'package:http/http.dart' as http;
 
@@ -93,8 +92,7 @@ class User {
       'Accept': 'application/json',
     };
 
-    final response =
-        await http.post(url, body: jsonEncode(body), headers: headers);
+    return await http.post(url, body: jsonEncode(body), headers: headers);
   }
 
   Future registerDoctor(

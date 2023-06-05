@@ -98,7 +98,7 @@ class _AppoitmentsState extends State<Appoitments> {
                       if (snapshot.hasError || !snapshot.hasData) {
                         return const SizedBox();
                       }
-                      // print(snapshot.data);
+
                       return ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
@@ -194,7 +194,7 @@ class _AppoitmentsState extends State<Appoitments> {
                                                 }
                                                 //
                                               } catch (e) {
-                                                print(e);
+                                                debugPrint(e.toString());
                                               }
                                             },
                                             child: const Text("Confirm"),
@@ -206,24 +206,18 @@ class _AppoitmentsState extends State<Appoitments> {
                             child: ListTile(
                               trailing: store.user.provider != null
                                   ? SizedBox()
-                                  : store.user.doctor != null &&
+                                  : snapshot.data[index]['values']
+                                              ['patient_confirm'] &&
                                           snapshot.data[index]['values']
                                               ['doctor_confirm']
                                       ? const Icon(
                                           Icons.done,
                                           color: MyColors.green0,
                                         )
-                                      : store.user.patient != null &&
-                                              snapshot.data[index]['values']
-                                                  ['patient_confirm']
-                                          ? const Icon(
-                                              Icons.done,
-                                              color: MyColors.green0,
-                                            )
-                                          : const Icon(
-                                              Icons.warning_amber_rounded,
-                                              color: Colors.red,
-                                            ),
+                                      : const Icon(
+                                          Icons.warning_amber_rounded,
+                                          color: Colors.red,
+                                        ),
                               subtitle:
                                   // ignore: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
                                   Text("${DateTime.parse(snapshot.data[index]['values']['createdAt']).year}-" +
