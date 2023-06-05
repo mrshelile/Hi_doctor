@@ -84,12 +84,17 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                                     items.map<DropdownMenuItem<dynamic>>((e) {
                                   return DropdownMenuItem(
                                       value: e,
-                                      child: Text(
-                                          " ${snapshots.data[e]['values']['full_name']}"));
+                                      child: SizedBox(
+                                        width: size.width * 0.45,
+                                        child: Text(
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            " ${snapshots.data[e]['values']['full_name']}"),
+                                      ));
                                 }).toList(),
                                 buttonStyleData: ButtonStyleData(
                                   height: size.height * 0.06,
-                                  width: 140,
+                                  width: size.width * 0.56,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(14),
@@ -119,7 +124,7 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                                         timeForAppointment:
                                             _selectedTime ?? TimeOfDay.now(),
                                         chosenUserId: selectedUser['id'] ?? 1);
-                               
+
                                 if (res.statusCode == 200) {
                                   Navigator.pop(context);
                                   store.update();
