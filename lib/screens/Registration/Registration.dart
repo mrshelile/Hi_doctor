@@ -181,6 +181,7 @@ class _RegisterFormState extends State<RegisterForm> {
               padding: EdgeInsets.only(
                   top: size.height * 0.3, left: size.width * 0.1),
               child: Form(
+                
                   key: _formkey,
                   child: ListView(
                     children: [
