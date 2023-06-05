@@ -76,7 +76,7 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                                     selectedUser = snapshots.data[value];
                                     selectedChooseUserIndex = value;
                                   });
-                                  // print(selectedUser);
+
                                   // print('selectedValue: $selectedValue');
                                   // print('snapshots.data: ${snapshots.data}');
                                 },
@@ -117,6 +117,28 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                                 var res = await CreateAppointmentLogic()
                                     .patientCreateAppointment(
                                         ownId: store.user.patient['id'],
+                                        title: _titleController.text.trim(),
+                                        reason: _symptomsController.text.trim(),
+                                        dateForAppointment: DateTime.parse(
+                                            _dateController.text.trim()),
+                                        timeForAppointment:
+                                            _selectedTime ?? TimeOfDay.now(),
+                                        chosenUserId: selectedUser['id'] ?? 1);
+
+                                if (res.statusCode == 200) {
+                                  Navigator.pop(context);
+                                  store.update();
+                                }
+                              } else {
+                                throw Exception("User is not selected");
+                              }
+                            }
+                            if (store.user.doctor != null) {
+                              if (selectedUser != null) {
+                                
+                                var res = await CreateAppointmentLogic()
+                                    .doctorCreateAppointment(
+                                        ownId: store.user.doctor['id'],
                                         title: _titleController.text.trim(),
                                         reason: _symptomsController.text.trim(),
                                         dateForAppointment: DateTime.parse(

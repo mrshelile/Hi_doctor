@@ -29,6 +29,14 @@ class AppointmentLogic {
     ).toList();
   }
 
+  Future getAuthUser({required var id}) async {
+    final Uri url = Uri.parse("${server}api/users/$id?populate=*");
+
+    return (await http.get(url)).body;
+
+    // return jsonDecode(res.body);
+  }
+
   Future patientGetAppointments(
       {required var id, required String search}) async {
     List appointments = [];
@@ -36,10 +44,11 @@ class AppointmentLogic {
     var response = await http.get(url);
     List data = jsonDecode(response.body)['data'];
     debugPrint("Get Appointments while logged as patient");
-
+    var idUser = jsonDecode(await getAuthUser(id: id))['id'];
     for (var item in data) {
       if (item['attributes']['patient'] != null) {
-        if (item['attributes']['patient']['data']['id'] == id) {
+        // print(item);
+        if (idUser == id) {
           appointments.add({"id": item['id'], "values": item['attributes']});
         }
       }
@@ -64,10 +73,10 @@ class AppointmentLogic {
     var response = await http.get(url);
     List data = jsonDecode(response.body)['data'];
     debugPrint("Get Appointments while logged as doctor");
-
+    var idUser = jsonDecode(await getAuthUser(id: id))['id'];
     for (var item in data) {
       if (item['attributes']['doctor'] != null) {
-        if (item['attributes']['doctor']['data']['id'] == id) {
+        if (idUser == id) {
           appointments.add({"id": item['id'], "values": item['attributes']});
         }
       }
