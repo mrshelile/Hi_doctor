@@ -47,6 +47,7 @@ class _DoctorsState extends State<Doctors> {
                   ),
                   Text(
                     "Hi ${store.user.doctor != null ? "Dr. " + store.user.doctor['full_name'] : store.user.provider != null ? store.user.provider['full_name'] : store.user.patient['full_name']}",
+             
                     style: const TextStyle(
                         color: MyColors.blue1, fontWeight: FontWeight.w700),
                   ),

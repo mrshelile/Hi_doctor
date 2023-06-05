@@ -47,7 +47,7 @@ class _PatientsState extends State<Patients> {
                       child: SvgPicture.asset("assets/nurse1.svg"),
                     ),
                     Text(
-                      "Hi ${store.user.fullNames.toString()}",
+                      "Hi ${store.user.doctor != null ? "Dr. " + store.user.doctor['full_name'] : store.user.provider != null ? store.user.provider['full_name'] : store.user.patient['full_name']}",
                       style: const TextStyle(
                           color: MyColors.blue1, fontWeight: FontWeight.w700),
                     ),

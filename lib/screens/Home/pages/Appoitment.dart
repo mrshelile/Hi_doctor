@@ -89,7 +89,11 @@ class _AppoitmentsState extends State<Appoitments> {
                 SizedBox(
                   height: size.height * 0.675,
                   child: StreamBuilder(
-                    stream: store.getPatientAppointments(id: 2).asStream(),
+                    stream: store.user.provider != null
+                        ? store.getProviderAppointments().asStream()
+                        : store.user.doctor != null
+                            ? store.getDoctorAppointments(id: 2).asStream()
+                            : store.getPatientAppointments(id: 2).asStream(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError || !snapshot.hasData) {
                         return const SizedBox();

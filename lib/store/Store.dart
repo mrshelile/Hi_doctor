@@ -17,6 +17,16 @@ class Store extends GetxController {
         id: id, search: searchForAppointment);
   }
 
+  Future getProviderAppointments() async {
+    return await appoitment.providerGetAppointment(
+        search: searchForAppointment);
+  }
+
+  Future getDoctorAppointments({required var id}) async {
+    return await appoitment.doctorGetAppointments(
+        id: id, search: searchForAppointment);
+  }
+
   Future getAllDoctors({required String search}) async {
     // print(searchForDoctor);
     return await doctors.getallDoctors(search: search);
@@ -24,6 +34,6 @@ class Store extends GetxController {
 
   Future getAllPatients({required search}) async {
     // print(searchForPatient);
-    return await patients.getallPatients(search:search);
+    return await patients.getallPatients(search: search);
   }
 }
