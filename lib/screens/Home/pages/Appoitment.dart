@@ -153,9 +153,31 @@ class _AppoitmentsState extends State<Appoitments> {
                                                 backgroundColor:
                                                     MaterialStatePropertyAll<
                                                         Color>(MyColors.blue2)),
-                                            onPressed: () {
-                                              // Do something with the user's name.
-                                              Navigator.of(context).pop();
+                                            onPressed: () async {
+                                              try {
+                                                var response;
+                                                if (store.user
+                                                        .doctor != // here doctor confirms appointment
+                                                    null) {
+                                                  response = await store.user
+                                                      .confirmAppointMentDoctor(
+                                                          id: snapshot
+                                                                  .data[index]
+                                                              ['id']);
+                                                  store.update();
+                                                }
+
+                                                if (response.statusCode ==
+                                                    200) {
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  throw Exception("Failed");
+                                                }
+                                                //
+                                              } catch (e) {
+                                                debugPrint(e.toString());
+                                              }
                                             },
                                             child: const Text("Confirm"),
                                           ),
@@ -181,9 +203,6 @@ class _AppoitmentsState extends State<Appoitments> {
                                                               ['id']);
                                                   store.update();
                                                 }
-                                                if (store.user
-                                                        .doctor != // here doctor confirm appointment
-                                                    null) {}
 
                                                 if (response.statusCode ==
                                                     200) {

@@ -71,6 +71,21 @@ class User {
     return await http.put(url, body: jsonEncode(body), headers: headers);
   }
 
+  Future confirmAppointMentDoctor({required var id}) async {
+    final Uri url = Uri.parse('$server$_appointmentUrl/$id');
+    final body = {
+      "data": {
+        'doctor_confirm': true,
+      }
+    };
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    return await http.put(url, body: jsonEncode(body), headers: headers);
+  }
+
   Future sendSms(
       {required String subject,
       required String message,
