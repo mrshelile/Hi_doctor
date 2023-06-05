@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hi_doctor/models/User.dart';
 import 'package:hi_doctor/screens/Login/LoginForm.dart';
 import 'package:hi_doctor/screens/Registration/components/background.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
@@ -13,18 +14,20 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   String? selectedValue;
   DateTime? selectedDate;
-
+  final _fullNameController = TextEditingController();
+  final _contactController = TextEditingController();
+  final _idNumberController = TextEditingController();
+  final _addressController = TextEditingController();
+  bool _idNumberExist = false;
+  bool _passwordsMatched = false;
+  final _passwordController = TextEditingController();
+  final _rePasswordController = TextEditingController();
+  final _specialtyController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
+  final _user = User();
+  var _userFound;
   @override
   Widget build(BuildContext context) {
-    final _fullNameController = TextEditingController();
-    final _contactController = TextEditingController();
-    final _idNumberController = TextEditingController();
-    final _addressController = TextEditingController();
-    final _tokenController = TextEditingController();
-    final _passwordController = TextEditingController();
-    final _rePasswordController = TextEditingController();
-    final _specialtyController = TextEditingController();
-    final _formkey = GlobalKey<FormState>();
     final size = MediaQuery.of(context).copyWith().size;
     return Scaffold(
         floatingActionButton: Container(
@@ -77,9 +80,17 @@ class _RegisterFormState extends State<RegisterForm> {
                 FloatingActionButton(
                   backgroundColor: MyColors.blue2,
                   child: const Icon(Icons.send),
-                  onPressed: () {
+                  onPressed: () async {
+                    if (_passwordController.text ==
+                        _rePasswordController.text) {
+                      _passwordsMatched = true;
+                      // throw Exception("Password do not match");
+                    }
                     if (_formkey.currentState!.validate()) {
                       try {
+                        if (!_passwordsMatched) {
+                          throw Exception("Passwords do not match");
+                        }
                         if (selectedValue != null || selectedValue!.isEmpty) {
                           if (selectedValue.toString().toLowerCase() ==
                               "patient") {
@@ -94,9 +105,25 @@ class _RegisterFormState extends State<RegisterForm> {
                           {}
                           if (selectedValue.toString().toLowerCase() ==
                               "provider") //Registraion of Hopital care provider
-                          {}
+                          {
+                            var data = await _user.registerProvider(
+                                user: _userFound,
+                                full_name: _fullNameController.text.trim(),
+                                id_number: _idNumberController.text.trim(),
+                                contact: _contactController.text.trim(),
+                                password: _passwordController.text);
+                            if (data != null) {
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginForm(),
+                                  ));
+                            }
+                          }
                         }
                       } catch (e) {
+                        _passwordsMatched = false;
                         debugPrint(e.toString());
                       }
                     }
@@ -187,7 +214,33 @@ class _RegisterFormState extends State<RegisterForm> {
                           if (value == null || value.isEmpty) {
                             return "Field is Required";
                           }
+                          if (!_idNumberExist &&
+                              selectedValue.toString().toLowerCase() !=
+                                  "patient") {
+                            return "ID Number does not exist";
+                          }
                           return null;
+                        },
+                        onChanged: (value) async {
+                          if (selectedValue.toString().toLowerCase() ==
+                                  "provider" &&
+                              _idNumberController.text.isNotEmpty) {
+                            try {
+                              var res = await _user.checkIsProvider(
+                                  checker: _idNumberController.text.trim());
+                              if (res != null) {
+                                setState(() {
+                                  _userFound = res;
+                                  _idNumberExist = true;
+                                });
+                              }
+                            } catch (e) {
+                              setState(() {
+                                _idNumberExist = false;
+                              });
+                              debugPrint(e.toString());
+                            }
+                          }
                         },
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
@@ -209,11 +262,11 @@ class _RegisterFormState extends State<RegisterForm> {
                         height: size.height * 0.02,
                       ),
                       TextFormField(
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
+                        // inputFormatters: <TextInputFormatter>[
+                        //   FilteringTextInputFormatter.digitsOnly,
+                        // ],
                         controller: _contactController,
-                        keyboardType: TextInputType.number,
+                        // keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Field is Required";
@@ -312,50 +365,17 @@ class _RegisterFormState extends State<RegisterForm> {
                         SizedBox(
                           height: size.height * 0.02,
                         ),
-                      ] else
-                        // else
-                        ...[
-                        TextFormField(
-                          validator: (value) {
-                            if (selectedValue.toString().toLowerCase() !=
-                                "patient") {
-                              if (value == null || value.isEmpty) {
-                                return "Field is Required";
-                              }
-                            }
-                            return null;
-                          },
-                          controller: _tokenController,
-                          obscureText: true,
-                          // keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                              isDense: true,
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20, 20, 20, 0),
-                              labelStyle: TextStyle(
-                                color: MyColors.blue0,
-                              ),
-                              focusColor: MyColors.blue0,
-                              border: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(45)),
-                                  borderSide:
-                                      BorderSide(color: MyColors.blue0)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: MyColors.blue0)),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: MyColors.blue0),
-                              ),
-                              labelText: "token"),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.02,
-                        ),
                       ],
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Field is required";
+                          }
+                          if (!_passwordsMatched) {
+                            return "Passwords do not match";
                           }
                           return null;
                         },
@@ -386,6 +406,9 @@ class _RegisterFormState extends State<RegisterForm> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Field is required";
+                          }
+                          if (!_passwordsMatched) {
+                            return "Passwords do not match";
                           }
                           return null;
                         },

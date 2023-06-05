@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:hi_doctor/constants/boot.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,8 +15,10 @@ class User {
   var id;
   String address = "";
   String jwt = "";
-  String token = "";
   final String _userUrl = "api/users";
+  final String _providerUrl = "api/providers";
+  final String _doctorUrl = "api/doctors";
+  final String _patientUrl = "api/patients";
   final String _login = "api/auth/local";
   final String _register = "api/auth/local/register";
   final String _appointmentUrl = "api/appoitments";
@@ -86,10 +89,6 @@ class User {
     return await http.put(url, body: jsonEncode(body), headers: headers);
   }
 
-  Future sendSms(
-      {required String subject,
-      required String message,
-      required String phone_number}) async {}
   Future registerPatient(
       {required String full_name,
       required String Id_number,
@@ -135,24 +134,53 @@ class User {
 
   Future registerProvider(
       {required String full_name,
-      required String Id_number,
+      required String id_number,
       required String contact,
-      required String token,
-      required String password,
-      required String rePassword}) // Hospital registration Logic
+      required var user,
+      required String password}) // Hospital provider registration Logic
   async {
     final Uri url = Uri.parse('$server$_register');
     final body = {
-      'identifier': username,
-      // 'password': password,
+      'username': id_number,
+      "email": "$id_number@email.com",
+      'password': password,
     };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
+    print(user['id']);
 
-    final response =
-        await http.post(url, body: jsonEncode(body), headers: headers);
+    if (user != null) {
+      final response =
+          await http.post(url, body: jsonEncode(body), headers: headers);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        final body1 = {
+          "data": {
+            "contacts": contact,
+            "user": data['user']['id'],
+            "id_number": id_number,
+            "full_name": full_name
+          }
+        };
+        var res = await http.put(
+            Uri.parse("$server$_providerUrl/${user['id']}"),
+            body: jsonEncode(body1),
+            headers: headers);
+
+        if (res.statusCode == 200) {
+          return jsonDecode(res.body);
+        }
+
+        throw Exception(
+            "Unhandled error and user provider not updated or registered");
+      } else {
+        throw Exception("failed to register");
+      }
+    } else {
+      throw Exception("User hospital provider not found");
+    }
   }
 
   Future checkIsDoctor(
@@ -170,17 +198,32 @@ class User {
     };
   }
 
-  Future
-      checkIsProvider() //Check whether the provided token is available in the hospital and belongs to Hospital Representative
+  Future checkIsProvider({
+    required String checker,
+  }) //Check whether the provided token is available in the hospital and belongs to Hospital Representative
   async {
-    final Uri url = Uri.parse('$server$_register');
-    final body = {
-      'identifier': username,
-      // 'password': password,
-    };
+    final Uri url = Uri.parse('$server$_providerUrl');
+    // final body = {
+    //   'identifier': username,
+    //   // 'password': password,
+    // };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
+    var res = await http.get(url);
+
+    if (res.statusCode.toInt() == 200) {
+      var data = jsonDecode(res.body);
+
+      for (var item in data['data']) {
+        if (item['attributes']['id_number'].toString().toLowerCase() ==
+            checker.toString().toLowerCase()) {
+          return item;
+        }
+      }
+      throw Exception("Hospital Provider with that ID does not exist");
+    }
+    throw Exception("Failed or No provider registered");
   }
 }
