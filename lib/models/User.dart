@@ -111,25 +111,52 @@ class User {
 
   Future registerDoctor(
       {required String full_name,
-      required String specialty,
-      required String Id_number,
+      required String id_number,
       required String contact,
-      required String token,
-      required String password,
-      required String rePassword}) // Doctor registration Logic
+      required var user,
+      required String specialty,
+      required String password}) // Hospital provider registration Logic
   async {
     final Uri url = Uri.parse('$server$_register');
     final body = {
-      'identifier': username,
-      // 'password': password,
+      'username': id_number,
+      "email": "$id_number@email.com",
+      'password': password,
     };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    final response =
-        await http.post(url, body: jsonEncode(body), headers: headers);
+    if (user != null) {
+      final response =
+          await http.post(url, body: jsonEncode(body), headers: headers);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        final body1 = {
+          "data": {
+            "contacts": contact,
+            "user": data['user']['id'],
+            "id_number": id_number,
+            "specialty": specialty,
+            "full_name": full_name
+          }
+        };
+        var res = await http.put(Uri.parse("$server$_doctorUrl/${user['id']}"),
+            body: jsonEncode(body1), headers: headers);
+
+        if (res.statusCode == 200) {
+          return jsonDecode(res.body);
+        }
+
+        throw Exception(
+            "Unhandled error and user provider not updated or registered");
+      } else {
+        throw Exception("failed to register");
+      }
+    } else {
+      throw Exception("User hospital provider not found");
+    }
   }
 
   Future registerProvider(
@@ -149,7 +176,6 @@ class User {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-    print(user['id']);
 
     if (user != null) {
       final response =
@@ -185,17 +211,31 @@ class User {
 
   Future checkIsDoctor(
       {required String
-          token}) //Check whether the provided token is available in the hospital and belongs to doctor
+          checker}) //Check whether the provided token is available in the hospital and belongs to doctor
   async {
-    final Uri url = Uri.parse('$server$_register');
-    final body = {
-      'identifier': username,
-      // 'password': password,
-    };
+    final Uri url = Uri.parse('$server$_doctorUrl');
+    // final body = {
+    //   'identifier': username,
+    //   // 'password': password,
+    // };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
+    var res = await http.get(url);
+
+    if (res.statusCode.toInt() == 200) {
+      var data = jsonDecode(res.body);
+
+      for (var item in data['data']) {
+        if (item['attributes']['id_number'].toString().toLowerCase() ==
+            checker.toString().toLowerCase()) {
+          return item;
+        }
+      }
+      throw Exception("Hospital Provider with that ID does not exist");
+    }
+    throw Exception("Failed or No provider registered");
   }
 
   Future checkIsProvider({

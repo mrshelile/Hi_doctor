@@ -83,8 +83,15 @@ class _RegisterFormState extends State<RegisterForm> {
                   onPressed: () async {
                     if (_passwordController.text ==
                         _rePasswordController.text) {
-                      _passwordsMatched = true;
+                      setState(() {
+                        _passwordsMatched = true;
+                      });
+
                       // throw Exception("Password do not match");
+                    } else {
+                      setState(() {
+                        _passwordsMatched = false;
+                      });
                     }
                     if (_formkey.currentState!.validate()) {
                       try {
@@ -102,7 +109,24 @@ class _RegisterFormState extends State<RegisterForm> {
                           }
                           if (selectedValue.toString().toLowerCase() ==
                               "doctor") // registration for doctor
-                          {}
+                          {
+                            var data = await _user.registerDoctor(
+                                user: _userFound,
+                                specialty: _specialtyController.text.trim(),
+                                full_name: _fullNameController.text.trim(),
+                                id_number: _idNumberController.text.trim(),
+                                contact: _contactController.text.trim(),
+                                password: _passwordController.text.trim());
+                            if (data != null) {
+                              
+                              //ignore: use_build_context_synchronously
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginForm(),
+                                  ));
+                            }
+                          }
                           if (selectedValue.toString().toLowerCase() ==
                               "provider") //Registraion of Hopital care provider
                           {
@@ -123,7 +147,6 @@ class _RegisterFormState extends State<RegisterForm> {
                           }
                         }
                       } catch (e) {
-                        _passwordsMatched = false;
                         debugPrint(e.toString());
                       }
                     }
@@ -227,6 +250,25 @@ class _RegisterFormState extends State<RegisterForm> {
                               _idNumberController.text.isNotEmpty) {
                             try {
                               var res = await _user.checkIsProvider(
+                                  checker: _idNumberController.text.trim());
+                              if (res != null) {
+                                setState(() {
+                                  _userFound = res;
+                                  _idNumberExist = true;
+                                });
+                              }
+                            } catch (e) {
+                              setState(() {
+                                _idNumberExist = false;
+                              });
+                              debugPrint(e.toString());
+                            }
+                          }
+                          if (selectedValue.toString().toLowerCase() ==
+                                  "doctor" &&
+                              _idNumberController.text.isNotEmpty) {
+                            try {
+                              var res = await _user.checkIsDoctor(
                                   checker: _idNumberController.text.trim());
                               if (res != null) {
                                 setState(() {
