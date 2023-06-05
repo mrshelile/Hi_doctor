@@ -91,22 +91,49 @@ class User {
 
   Future registerPatient(
       {required String full_name,
-      required String Id_number,
+      required String id_number,
       required String contact,
       required DateTime DOB,
+      required String password,
       required String address}) // patient registration Logic
   async {
     final Uri url = Uri.parse('$server$_register');
     final body = {
-      'identifier': username,
-      // 'password': password,
+      'username': id_number,
+      "email": "$id_number@email.com",
+      'password': password,
     };
     Map<String, String> headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    return await http.post(url, body: jsonEncode(body), headers: headers);
+    final response =
+        await http.post(url, body: jsonEncode(body), headers: headers);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      final body1 = {
+        "data": {
+          "contacts": contact,
+          "user": data['user']['id'],
+          "id_number": id_number,
+          "full_name": full_name,
+          "DOB": DOB.toIso8601String(),
+          "address": address
+        }
+      };
+      var res = await http.post(Uri.parse("$server$_patientUrl"),
+          body: jsonEncode(body1), headers: headers);
+ 
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body);
+      }
+
+      throw Exception(
+          "Unhandled error and user patient not updated or registered");
+    } else {
+      throw Exception("failed to register");
+    }
   }
 
   Future registerDoctor(
@@ -150,7 +177,7 @@ class User {
         }
 
         throw Exception(
-            "Unhandled error and user provider not updated or registered");
+            "Unhandled error and user doctor not updated or registered");
       } else {
         throw Exception("failed to register");
       }

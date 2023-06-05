@@ -1,6 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:hi_doctor/models/User.dart';
 import 'package:hi_doctor/screens/Login/LoginForm.dart';
 import 'package:hi_doctor/screens/Registration/components/background.dart';
@@ -15,6 +16,8 @@ class _RegisterFormState extends State<RegisterForm> {
   String? selectedValue;
   DateTime? selectedDate;
   final _fullNameController = TextEditingController();
+  final _DOBController = TextEditingController();
+
   final _contactController = TextEditingController();
   final _idNumberController = TextEditingController();
   final _addressController = TextEditingController();
@@ -103,6 +106,21 @@ class _RegisterFormState extends State<RegisterForm> {
                               "patient") {
                             // registration for patient
                             if (selectedDate != null) {
+                              var data = await _user.registerPatient(
+                                  full_name: _fullNameController.text.trim(),
+                                  id_number: _idNumberController.text.trim(),
+                                  contact: _contactController.text.trim(),
+                                  DOB: selectedDate!,
+                                  password: _passwordController.text.trim(),
+                                  address: _addressController.text.trim());
+                              if (data != null) {
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginForm(),
+                                    ));
+                              }
                             } else {
                               throw Exception("Date of birth is required");
                             }
@@ -118,7 +136,6 @@ class _RegisterFormState extends State<RegisterForm> {
                                 contact: _contactController.text.trim(),
                                 password: _passwordController.text.trim());
                             if (data != null) {
-                              
                               //ignore: use_build_context_synchronously
                               Navigator.pushReplacement(
                                   context,
@@ -168,6 +185,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   child: ListView(
                     children: [
                       TextFormField(
+                        textInputAction: TextInputAction.next,
                         controller: _fullNameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -196,6 +214,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       if (selectedValue.toString().toLowerCase() ==
                           "doctor") ...[
                         TextFormField(
+                          textInputAction: TextInputAction.next,
                           validator: (value) {
                             if (selectedValue.toString().toLowerCase() ==
                                 "doctor") {
@@ -229,6 +248,7 @@ class _RegisterFormState extends State<RegisterForm> {
                         ),
                       ],
                       TextFormField(
+                        textInputAction: TextInputAction.next,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly,
                         ],
@@ -304,9 +324,8 @@ class _RegisterFormState extends State<RegisterForm> {
                         height: size.height * 0.02,
                       ),
                       TextFormField(
-                        // inputFormatters: <TextInputFormatter>[
-                        //   FilteringTextInputFormatter.digitsOnly,
-                        // ],
+                        textInputAction: TextInputAction.next,
+
                         controller: _contactController,
                         // keyboardType: TextInputType.number,
                         validator: (value) {
@@ -338,14 +357,24 @@ class _RegisterFormState extends State<RegisterForm> {
                       if (selectedValue.toString().toLowerCase() ==
                           "patient") ...[
                         TextFormField(
+                          textInputAction: TextInputAction.next,
+
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Field is required";
+                            }
+                            return null;
+                          },
+                          controller: _DOBController,
                           onTap: () {
                             showDatePicker(
                               context: context,
-                              initialDate: DateTime.now(),
+                              initialDate: DateTime(1990),
                               firstDate: DateTime(1827),
                               lastDate: DateTime(2050),
                             ).then((date) {
                               setState(() {
+                                _DOBController.text = date!.toIso8601String();
                                 selectedDate = date;
                               });
                             });
@@ -377,6 +406,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           height: size.height * 0.02,
                         ),
                         TextFormField(
+                          textInputAction: TextInputAction.next,
                           controller: _addressController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -411,7 +441,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       SizedBox(
                         height: size.height * 0.02,
                       ),
-                      TextFormField(
+                      TextFormField(  textInputAction: TextInputAction.next,
+
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Field is required";
@@ -444,7 +475,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       SizedBox(
                         height: size.height * 0.02,
                       ),
-                      TextFormField(
+                      TextFormField(  textInputAction: TextInputAction.next,
+
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Field is required";

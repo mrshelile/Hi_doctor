@@ -34,7 +34,6 @@ class _LoginFormState extends State<LoginForm> {
               //     context, MaterialPageRoute(builder: (context) => HomePage()));
 
               try {
-                print("object");
                 var res = await store.user
                     .login(
                         username: _usernameController.text.trim(),
@@ -78,6 +77,7 @@ class _LoginFormState extends State<LoginForm> {
                         child: ListView(
                           children: [
                             TextFormField(
+                              textInputAction: TextInputAction.next,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly,
                               ],
@@ -109,6 +109,7 @@ class _LoginFormState extends State<LoginForm> {
                               height: size.height * 0.05,
                             ),
                             TextFormField(
+                              textInputAction: TextInputAction.next,
                               controller: _passwordController,
                               validator: Validators.compose([
                                 Validators.required('Password is required'),
