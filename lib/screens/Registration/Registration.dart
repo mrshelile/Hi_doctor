@@ -85,7 +85,6 @@ class _RegisterFormState extends State<RegisterForm> {
                               "patient") {
                             // registration for patient
                             if (selectedDate != null) {
-                              
                             } else {
                               throw Exception("Date of birth is required");
                             }
@@ -352,79 +351,67 @@ class _RegisterFormState extends State<RegisterForm> {
                         SizedBox(
                           height: size.height * 0.02,
                         ),
-                        TextFormField(
-                          validator: (value) {
-                            if (selectedValue.toString().toLowerCase() !=
-                                "patient") {
-                              if (value == null || value.isEmpty) {
-                                return "Field is required";
-                              }
-                            }
-                            return null;
-                          },
-                          controller: _passwordController,
-                          obscureText: true,
-                          // keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                              isDense: true,
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20, 20, 20, 0),
-                              labelStyle: TextStyle(
-                                color: MyColors.blue0,
-                              ),
-                              focusColor: MyColors.blue0,
-                              border: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(45)),
-                                  borderSide:
-                                      BorderSide(color: MyColors.blue0)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: MyColors.blue0)),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: MyColors.blue0),
-                              ),
-                              labelText: "Password"),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.02,
-                        ),
-                        TextFormField(
-                          validator: (value) {
-                            if (selectedValue.toString().toLowerCase() !=
-                                "patient") {
-                              if (value == null || value.isEmpty) {
-                                return "Field is required";
-                              }
-                            }
-                            return null;
-                          },
-                          controller: _rePasswordController,
-                          obscureText: true,
-                          // keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                              isDense: true,
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20, 20, 20, 0),
-                              labelStyle: TextStyle(
-                                color: MyColors.blue0,
-                              ),
-                              focusColor: MyColors.blue0,
-                              border: OutlineInputBorder(
-                                  // borderRadius: BorderRadius.all(Radius.circular(45)),
-                                  borderSide:
-                                      BorderSide(color: MyColors.blue0)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: MyColors.blue0)),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: MyColors.blue0),
-                              ),
-                              labelText: "Confirm Password"),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.02,
-                        )
                       ],
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Field is required";
+                          }
+                          return null;
+                        },
+                        controller: _passwordController,
+                        obscureText: true,
+                        // keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            labelStyle: TextStyle(
+                              color: MyColors.blue0,
+                            ),
+                            focusColor: MyColors.blue0,
+                            border: OutlineInputBorder(
+                                // borderRadius: BorderRadius.all(Radius.circular(45)),
+                                borderSide: BorderSide(color: MyColors.blue0)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: MyColors.blue0)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: MyColors.blue0),
+                            ),
+                            labelText: "Password"),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Field is required";
+                          }
+                          return null;
+                        },
+                        controller: _rePasswordController,
+                        obscureText: true,
+                        // keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            labelStyle: TextStyle(
+                              color: MyColors.blue0,
+                            ),
+                            focusColor: MyColors.blue0,
+                            border: OutlineInputBorder(
+                                // borderRadius: BorderRadius.all(Radius.circular(45)),
+                                borderSide: BorderSide(color: MyColors.blue0)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: MyColors.blue0)),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: MyColors.blue0),
+                            ),
+                            labelText: "Confirm Password"),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
                       Center(
                           child: TextButton(
                               style: const ButtonStyle(
