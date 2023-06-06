@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:hi_doctor/screens/Home/pages/components/CreateMadicalRecord.dart';
 import 'package:hi_doctor/screens/Home/pages/components/MedicalRecord.dart';
 import 'package:hi_doctor/store/Store.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
@@ -37,6 +38,7 @@ class _MedicalRecordsState extends State<MedicalRecords> {
       });
     }
     DateTime now = DateTime.now();
+
     if (now.hour < 12) {
       setState(() {
         greeting = "Good Morning";
@@ -47,7 +49,7 @@ class _MedicalRecordsState extends State<MedicalRecords> {
         greeting = "GoodDay";
       });
     }
-    if (now.hour > 1 && now.hour <= 18) {
+    if (now.hour > 1) {
       setState(() {
         greeting = "Good Evening";
       });
@@ -114,35 +116,81 @@ class _MedicalRecordsState extends State<MedicalRecords> {
                 height: size.height * 0.28,
                 child: SvgPicture.asset("assets/dentist1.svg"),
               ),
-              SizedBox(
-                height: size.height * 0.32,
-                child: ListView.builder(
-                  itemCount: 15,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                        trailing: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MedicalRecord()));
-                            },
-                            icon: const Icon(
-                              Icons.arrow_circle_right,
-                              color: MyColors.blue1,
-                            )),
-                        subtitle: const Text(
-                            "Dr. Thao Nape and patient Malefetsane Shelile"),
-                        title: const Text("Diognosis",
-                            style: TextStyle(
-                              color: MyColors.blue2,
-                              fontWeight: FontWeight.w900,
-                            )));
-                  },
-                ),
-              )
+              Container(
+                padding: EdgeInsets.only(left: size.width * 0.7),
+                width: size.width,
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateMedicalRecord(),
+                          ));
+                    },
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.create,
+                          color: MyColors.blue1,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Create",
+                          style: TextStyle(color: MyColors.blue1),
+                        )
+                      ],
+                    )),
+              ),
+              StreamBuilder(
+                  stream: store.user.doctor != null
+                      ? store
+                          .getMedicalRecordsDoctor(id: store.user.id)
+                          .asStream()
+                      : store.user.patient != null
+                          ? store
+                              .getMedicalRecordsPatient(id: store.user.id)
+                              .asStream()
+                          : store.getMedicalRecordsProvider().asStream(),
+                  builder: (context, snapshots) {
+                    if (!snapshots.hasData || snapshots.hasError) {
+                      return const SizedBox();
+                    }
+
+                    return SizedBox(
+                      height: size.height * 0.32,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(0.5),
+                        itemCount: snapshots.data.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MedicalRecord(
+                                                  data: snapshots.data[index],
+                                                )));
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_circle_right,
+                                    color: MyColors.blue1,
+                                  )),
+                              subtitle: Text(
+                                  "Dr. ${snapshots.data[index]['values']['doctor']['data']['attributes']['full_name']} and patient ${snapshots.data[index]['values']['patient']['data']['attributes']['full_name']}"),
+                              title: Text(
+                                  snapshots.data[index]['values']['diaognosis'],
+                                  style: const TextStyle(
+                                    color: MyColors.blue2,
+                                    fontWeight: FontWeight.w900,
+                                  )));
+                        },
+                      ),
+                    );
+                  })
             ],
           );
         });

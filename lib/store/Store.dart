@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hi_doctor/logic/MedicalRecords_Logic.dart';
 import 'package:hi_doctor/logic/Patients_logic.dart';
 import 'package:hi_doctor/logic/appointment_logic.dart';
 import 'package:hi_doctor/logic/doctors_logic.dart';
@@ -9,12 +10,29 @@ class Store extends GetxController {
   final appoitment = AppointmentLogic();
   final doctors = DoctorsLogic();
   final patients = PatientsLogic();
+  final medicalRecords = MedicalRecordsLogic();
   String searchForAppointment = "";
+  String searchForMedicalRecord = "";
   // String searchForDoctor = "";
   // String searchForPatient = "";
   Future getPatientAppointments({required var id}) async {
     return await appoitment.patientGetAppointments(
         id: id, search: searchForAppointment);
+  }
+
+  Future getMedicalRecordsDoctor({required var id}) async {
+    return await medicalRecords.doctorGetMedicalRecords(
+        user_id: id, search: searchForMedicalRecord);
+  }
+
+  Future getMedicalRecordsPatient({required var id}) async {
+    return await medicalRecords.doctorGetMedicalRecords(
+        user_id: id, search: searchForMedicalRecord);
+  }
+
+  Future getMedicalRecordsProvider() async {
+    return await medicalRecords.providerGetMedicalRecords(
+        search: searchForMedicalRecord);
   }
 
   Future getProviderAppointments() async {

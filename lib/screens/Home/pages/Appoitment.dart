@@ -92,13 +92,16 @@ class _AppoitmentsState extends State<Appoitments> {
                     stream: store.user.provider != null
                         ? store.getProviderAppointments().asStream()
                         : store.user.doctor != null
-                            ? store.getDoctorAppointments(id: 2).asStream()
-                            : store.getPatientAppointments(id: 2).asStream(),
+                            ? store
+                                .getDoctorAppointments(id: store.user.id)
+                                .asStream()
+                            : store
+                                .getPatientAppointments(id: store.user.id)
+                                .asStream(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError || !snapshot.hasData) {
                         return const SizedBox();
                       }
-
                       return ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
