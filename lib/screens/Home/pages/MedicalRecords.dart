@@ -116,33 +116,34 @@ class _MedicalRecordsState extends State<MedicalRecords> {
                 height: size.height * 0.28,
                 child: SvgPicture.asset("assets/dentist1.svg"),
               ),
-              Container(
-                padding: EdgeInsets.only(left: size.width * 0.7),
-                width: size.width,
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CreateMedicalRecord(),
-                          ));
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.create,
-                          color: MyColors.blue1,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          "Create",
-                          style: TextStyle(color: MyColors.blue1),
-                        )
-                      ],
-                    )),
-              ),
+              if (store.user.doctor != null)
+                Container(
+                  padding: EdgeInsets.only(left: size.width * 0.7),
+                  width: size.width,
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CreateMedicalRecord(),
+                            ));
+                      },
+                      child: Row(
+                        children: const [
+                          Icon(
+                            Icons.create,
+                            color: MyColors.blue1,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Create",
+                            style: TextStyle(color: MyColors.blue1),
+                          )
+                        ],
+                      )),
+                ),
               StreamBuilder(
                   stream: store.user.provider != null
                       ? Stream.empty()
