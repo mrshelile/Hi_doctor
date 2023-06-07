@@ -144,15 +144,17 @@ class _MedicalRecordsState extends State<MedicalRecords> {
                     )),
               ),
               StreamBuilder(
-                  stream: store.user.doctor != null
-                      ? store
-                          .getMedicalRecordsDoctor(id: store.user.id)
-                          .asStream()
-                      : store.user.patient != null
+                  stream: store.user.provider != null
+                      ? Stream.empty()
+                      : store.user.doctor != null
                           ? store
-                              .getMedicalRecordsPatient(id: store.user.id)
+                              .getMedicalRecordsDoctor(
+                                  id: store.user.doctor['id'])
                               .asStream()
-                          : store.getMedicalRecordsProvider().asStream(),
+                          : store
+                              .getMedicalRecordsPatient(
+                                  id: store.user.patient['id'])
+                              .asStream(),
                   builder: (context, snapshots) {
                     if (!snapshots.hasData || snapshots.hasError) {
                       return const SizedBox();

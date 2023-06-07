@@ -26,13 +26,8 @@ class Store extends GetxController {
   }
 
   Future getMedicalRecordsPatient({required var id}) async {
-    return await medicalRecords.doctorGetMedicalRecords(
+    return await medicalRecords.patientGetMedicalRecords(
         user_id: id, search: searchForMedicalRecord);
-  }
-
-  Future getMedicalRecordsProvider() async {
-    return await medicalRecords.providerGetMedicalRecords(
-        search: searchForMedicalRecord);
   }
 
   Future getProviderAppointments() async {
