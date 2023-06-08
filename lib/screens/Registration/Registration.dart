@@ -28,7 +28,24 @@ class _RegisterFormState extends State<RegisterForm> {
   final _specialtyController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   final _user = User();
+  // ignore: prefer_typing_uninitialized_variables
   var _userFound;
+  bool isObscure1 = true;
+  bool isObscure2 = true;
+  List months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).copyWith().size;
@@ -174,14 +191,13 @@ class _RegisterFormState extends State<RegisterForm> {
         body: Stack(
           children: [
             //stack overlaps widgets
-            Background(),
+            const Background(),
             Container(
               width: size.width * 0.9,
               height: size.height * 0.9,
               padding: EdgeInsets.only(
                   top: size.height * 0.3, left: size.width * 0.1),
               child: Form(
-                
                   key: _formkey,
                   child: ListView(
                     children: [
@@ -375,8 +391,11 @@ class _RegisterFormState extends State<RegisterForm> {
                               lastDate: DateTime(2050),
                             ).then((date) {
                               setState(() {
-                                _DOBController.text = date!.toIso8601String();
-                                selectedDate = date;
+                                if (date != null) {
+                                  _DOBController.text =
+                                      "${date.day}  ${months[date.month]} ${date.year}";
+                                  selectedDate = date;
+                                }
                               });
                             });
                           },
@@ -442,7 +461,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       SizedBox(
                         height: size.height * 0.02,
                       ),
-                      TextFormField(  textInputAction: TextInputAction.next,
+                      TextFormField(
+                        textInputAction: TextInputAction.next,
 
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -454,21 +474,31 @@ class _RegisterFormState extends State<RegisterForm> {
                           return null;
                         },
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText: isObscure1,
                         // keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isObscure1 = !isObscure1;
+                                  });
+                                },
+                                icon: isObscure1
+                                    ? const Icon(Icons.visibility)
+                                    : const Icon(Icons.visibility_off)),
                             isDense: true,
-                            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            labelStyle: TextStyle(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            labelStyle: const TextStyle(
                               color: MyColors.blue0,
                             ),
                             focusColor: MyColors.blue0,
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(45)),
                                 borderSide: BorderSide(color: MyColors.blue0)),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: MyColors.blue0)),
-                            enabledBorder: OutlineInputBorder(
+                            enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: MyColors.blue0),
                             ),
                             labelText: "Password"),
@@ -476,7 +506,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       SizedBox(
                         height: size.height * 0.02,
                       ),
-                      TextFormField(  textInputAction: TextInputAction.next,
+                      TextFormField(
+                        textInputAction: TextInputAction.next,
 
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -488,21 +519,40 @@ class _RegisterFormState extends State<RegisterForm> {
                           return null;
                         },
                         controller: _rePasswordController,
-                        obscureText: true,
+                        obscureText: isObscure2,
                         // keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             isDense: true,
-                            contentPadding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                            labelStyle: TextStyle(
+                            // suffix: IconButton(
+                            //     onPressed: () {
+                            //       setState(() {
+                            //         isObscure2 = !isObscure2;
+                            //       });
+                            //     },
+                            //     icon: isObscure2
+                            //         ? const Icon(Icons.visibility)
+                            //         : const Icon(Icons.visibility_off)),
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isObscure2 = !isObscure2;
+                                  });
+                                },
+                                icon: isObscure2
+                                    ? const Icon(Icons.visibility)
+                                    : const Icon(Icons.visibility_off)),
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            labelStyle: const TextStyle(
                               color: MyColors.blue0,
                             ),
                             focusColor: MyColors.blue0,
-                            border: OutlineInputBorder(
+                            border: const OutlineInputBorder(
                                 // borderRadius: BorderRadius.all(Radius.circular(45)),
                                 borderSide: BorderSide(color: MyColors.blue0)),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: MyColors.blue0)),
-                            enabledBorder: OutlineInputBorder(
+                            enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: MyColors.blue0),
                             ),
                             labelText: "Confirm Password"),

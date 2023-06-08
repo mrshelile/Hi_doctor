@@ -25,6 +25,21 @@ class _CreateAppointmentState extends State<CreateAppointment> {
   var selectedChooseUserIndex;
   var selectedUser;
   TimeOfDay? _selectedTime;
+  List months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  var selectedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +134,8 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                                         ownId: store.user.patient['id'],
                                         title: _titleController.text.trim(),
                                         reason: _symptomsController.text.trim(),
-                                        dateForAppointment: DateTime.parse(
-                                            _dateController.text.trim()),
+                                        dateForAppointment:
+                                            selectedDate ?? DateTime.now(),
                                         timeForAppointment:
                                             _selectedTime ?? TimeOfDay.now(),
                                         chosenUserId: selectedUser['id'] ?? 1);
@@ -135,14 +150,13 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                             }
                             if (store.user.doctor != null) {
                               if (selectedUser != null) {
-                                
                                 var res = await CreateAppointmentLogic()
                                     .doctorCreateAppointment(
                                         ownId: store.user.doctor['id'],
                                         title: _titleController.text.trim(),
                                         reason: _symptomsController.text.trim(),
-                                        dateForAppointment: DateTime.parse(
-                                            _dateController.text.trim()),
+                                        dateForAppointment:
+                                            selectedDate ?? DateTime.now(),
                                         timeForAppointment:
                                             _selectedTime ?? TimeOfDay.now(),
                                         chosenUserId: selectedUser['id'] ?? 1);
@@ -247,7 +261,11 @@ class _CreateAppointmentState extends State<CreateAppointment> {
                       lastDate: DateTime(2050),
                     ).then((date) {
                       setState(() {
-                        _dateController.text = date!.toIso8601String();
+                        if (date != null) {
+                          _dateController.text =
+                              "${date.day}  ${months[date.month]} ${date.year}";
+                          selectedDate = date;
+                        }
                       });
                     });
                   },
