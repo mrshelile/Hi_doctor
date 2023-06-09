@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hi_doctor/models/User.dart';
 import 'package:hi_doctor/screens/Home/HomePage.dart';
 import 'package:hi_doctor/screens/Login/background.dart';
@@ -19,46 +20,62 @@ class _LoginFormState extends State<LoginForm> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   String _error = '';
+  bool isLoading = false;
+  Widget loader = Center(
+    child: const SpinKitWaveSpinner(
+      color: Color.fromARGB(255, 15, 90, 124),
+      size: 80.0,
+      // controller: AnimationController(vsync: this, duration: const Duration(milliseconds: 1200)),
+    ),
+  );
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).copyWith().size;
     final store = Get.find<Store>();
 
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: MyColors.blue2,
-          child: Icon(Icons.send),
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              // Navigator.push(
-              //     context, MaterialPageRoute(builder: (context) => HomePage()));
-
-              try {
-                var res = await store.user
-                    .login(
-                        username: _usernameController.text.trim(),
-                        password: _passwordController.text.trim())
-                    .timeout(Duration(seconds: 20), onTimeout: () {
-                  throw Exception("server might be available");
-                });
-                if (res['jwt'] != null) {
-                  setState(() {
-                    _error = '';
-                  });
-                  store.update();
-                  // ignore: use_build_context_synchronously
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HomePage()));
-                }
-                // print(res);
-              } catch (e) {
-                setState(() {
-                  _error = e.toString();
-                });
-              }
-            }
-          },
-        ),
+        floatingActionButton: isLoading
+            ? loader
+            : FloatingActionButton(
+                backgroundColor: MyColors.blue2,
+                child: Icon(Icons.send),
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    // Navigator.push(
+                    //     context, MaterialPageRoute(builder: (context) => HomePage()));
+                    setState(() {
+                      isLoading = true;
+                    });
+                    try {
+                      var res = await store.user
+                          .login(
+                              username: _usernameController.text.trim(),
+                              password: _passwordController.text.trim())
+                          .timeout(Duration(seconds: 20), onTimeout: () {
+                        throw Exception("server might be available");
+                      });
+                      if (res['jwt'] != null) {
+                        setState(() {
+                          _error = '';
+                          isLoading = false;
+                        });
+                        store.update();
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()));
+                      }
+                      // print(res);
+                    } catch (e) {
+                      setState(() {
+                        isLoading = false;
+                        _error = e.toString();
+                      });
+                    }
+                  }
+                },
+              ),
         body: GetBuilder(
             init: store,
             builder: (_) {

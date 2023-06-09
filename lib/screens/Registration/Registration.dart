@@ -6,6 +6,7 @@ import 'package:hi_doctor/models/User.dart';
 import 'package:hi_doctor/screens/Login/LoginForm.dart';
 import 'package:hi_doctor/screens/Registration/components/background.dart';
 import 'package:hi_doctor/theme/Mycolors.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class RegisterForm extends StatefulWidget {
   @override
@@ -29,6 +30,14 @@ class _RegisterFormState extends State<RegisterForm> {
   final _formkey = GlobalKey<FormState>();
   final _user = User();
   // ignore: prefer_typing_uninitialized_variables
+  bool isLoading = false;
+  Widget loader = Center(
+    child: const SpinKitWaveSpinner(
+      color: Color.fromARGB(255, 15, 90, 124),
+      size: 80.0,
+      // controller: AnimationController(vsync: this, duration: const Duration(milliseconds: 1200)),
+    ),
+  );
   var _userFound;
   bool isObscure1 = true;
   bool isObscure2 = true;
@@ -52,141 +61,173 @@ class _RegisterFormState extends State<RegisterForm> {
     return Scaffold(
         floatingActionButton: Container(
           padding: EdgeInsets.only(left: size.width * 0.07),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2(
-                    hint: const Text(
-                      '   Choose',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: Colors.cyan,
+          child: isLoading
+              ? loader
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton2(
+                          hint: const Text(
+                            '   Choose',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                              color: Colors.cyan,
+                            ),
+                          ),
+                          items: ["Doctor", "Patient", "Provider"]
+                              .map((item) => DropdownMenuItem<String>(
+                                    value: item,
+                                    child: Text(
+                                      "  $item",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 15,
+                                        color: Colors.cyan,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                          value: selectedValue,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedValue = value as String;
+                            });
+                          },
+                          buttonStyleData: ButtonStyleData(
+                              height: size.height * 0.06,
+                              width: 140,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                              )),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                        ),
                       ),
-                    ),
-                    items: ["Doctor", "Patient", "Provider"]
-                        .map((item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                "  $item",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 15,
-                                  color: Colors.cyan,
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                    value: selectedValue,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedValue = value as String;
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                        height: size.height * 0.06,
-                        width: 140,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        )),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                    ),
-                  ),
-                ),
-                FloatingActionButton(
-                  backgroundColor: MyColors.blue2,
-                  child: const Icon(Icons.send),
-                  onPressed: () async {
-                    if (_passwordController.text ==
-                        _rePasswordController.text) {
-                      setState(() {
-                        _passwordsMatched = true;
-                      });
+                      FloatingActionButton(
+                        backgroundColor: MyColors.blue2,
+                        child: const Icon(Icons.send),
+                        onPressed: () async {
+                          if (_passwordController.text ==
+                              _rePasswordController.text) {
+                            setState(() {
+                              _passwordsMatched = true;
+                            });
 
-                      // throw Exception("Password do not match");
-                    } else {
-                      setState(() {
-                        _passwordsMatched = false;
-                      });
-                    }
-                    if (_formkey.currentState!.validate()) {
-                      try {
-                        if (!_passwordsMatched) {
-                          throw Exception("Passwords do not match");
-                        }
-                        if (selectedValue != null || selectedValue!.isEmpty) {
-                          if (selectedValue.toString().toLowerCase() ==
-                              "patient") {
-                            // registration for patient
-                            if (selectedDate != null) {
-                              var data = await _user.registerPatient(
-                                  full_name: _fullNameController.text.trim(),
-                                  id_number: _idNumberController.text.trim(),
-                                  contact: _contactController.text.trim(),
-                                  DOB: selectedDate!,
-                                  password: _passwordController.text.trim(),
-                                  address: _addressController.text.trim());
-                              if (data != null) {
-                                // ignore: use_build_context_synchronously
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoginForm(),
-                                    ));
+                            // throw Exception("Password do not match");
+                          } else {
+                            setState(() {
+                              _passwordsMatched = false;
+                            });
+                          }
+                          if (_formkey.currentState!.validate()) {
+                            try {
+                              if (!_passwordsMatched) {
+                                throw Exception("Passwords do not match");
                               }
-                            } else {
-                              throw Exception("Date of birth is required");
+                              setState(() {
+                                isLoading = true;
+                              });
+                              if (selectedValue != null ||
+                                  selectedValue!.isEmpty) {
+                                if (selectedValue.toString().toLowerCase() ==
+                                    "patient") {
+                                  // registration for patient
+                                  if (selectedDate != null) {
+                                    var data = await _user.registerPatient(
+                                        full_name:
+                                            _fullNameController.text.trim(),
+                                        id_number:
+                                            _idNumberController.text.trim(),
+                                        contact: _contactController.text.trim(),
+                                        DOB: selectedDate!,
+                                        password:
+                                            _passwordController.text.trim(),
+                                        address:
+                                            _addressController.text.trim());
+                                    if (data != null) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => LoginForm(),
+                                          ));
+                                    }
+                                  } else {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    throw Exception(
+                                        "Date of birth is required");
+                                  }
+                                }
+                                if (selectedValue.toString().toLowerCase() ==
+                                    "doctor") // registration for doctor
+                                {
+                                  var data = await _user.registerDoctor(
+                                      user: _userFound,
+                                      specialty:
+                                          _specialtyController.text.trim(),
+                                      full_name:
+                                          _fullNameController.text.trim(),
+                                      id_number:
+                                          _idNumberController.text.trim(),
+                                      contact: _contactController.text.trim(),
+                                      password:
+                                          _passwordController.text.trim());
+                                  if (data != null) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    //ignore: use_build_context_synchronously
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginForm(),
+                                        ));
+                                  }
+                                }
+                                if (selectedValue.toString().toLowerCase() ==
+                                    "provider") //Registraion of Hopital care provider
+                                {
+                                  var data = await _user.registerProvider(
+                                      user: _userFound,
+                                      full_name:
+                                          _fullNameController.text.trim(),
+                                      id_number:
+                                          _idNumberController.text.trim(),
+                                      contact: _contactController.text.trim(),
+                                      password: _passwordController.text);
+                                  if (data != null) {
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                    // ignore: use_build_context_synchronously
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => LoginForm(),
+                                        ));
+                                  }
+                                }
+                              }
+                            } catch (e) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              debugPrint(e.toString());
                             }
                           }
-                          if (selectedValue.toString().toLowerCase() ==
-                              "doctor") // registration for doctor
-                          {
-                            var data = await _user.registerDoctor(
-                                user: _userFound,
-                                specialty: _specialtyController.text.trim(),
-                                full_name: _fullNameController.text.trim(),
-                                id_number: _idNumberController.text.trim(),
-                                contact: _contactController.text.trim(),
-                                password: _passwordController.text.trim());
-                            if (data != null) {
-                              //ignore: use_build_context_synchronously
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginForm(),
-                                  ));
-                            }
-                          }
-                          if (selectedValue.toString().toLowerCase() ==
-                              "provider") //Registraion of Hopital care provider
-                          {
-                            var data = await _user.registerProvider(
-                                user: _userFound,
-                                full_name: _fullNameController.text.trim(),
-                                id_number: _idNumberController.text.trim(),
-                                contact: _contactController.text.trim(),
-                                password: _passwordController.text);
-                            if (data != null) {
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginForm(),
-                                  ));
-                            }
-                          }
-                        }
-                      } catch (e) {
-                        debugPrint(e.toString());
-                      }
-                    }
-                  },
-                ),
-              ]),
+                        },
+                      ),
+                    ]),
         ),
         body: Stack(
           children: [
@@ -468,6 +509,14 @@ class _RegisterFormState extends State<RegisterForm> {
                           if (value == null || value.isEmpty) {
                             return "Field is required";
                           }
+                          if (value.length < 8) {
+                            return 'Password must be at least 8 characters long';
+                          }
+                          if (!RegExp(
+                                  r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$')
+                              .hasMatch(value)) {
+                            return 'Password not strong(eg. Password@9)';
+                          }
                           if (!_passwordsMatched) {
                             return "Passwords do not match";
                           }
@@ -512,6 +561,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Field is required";
+                          }
+                          if (value.length < 8) {
+                            return 'Password must be at least 8 characters long';
+                          }
+                          if (!RegExp(
+                                  r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$')
+                              .hasMatch(value)) {
+                            return 'Password not strong(eg. Password@9)';
                           }
                           if (!_passwordsMatched) {
                             return "Passwords do not match";
